@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — EraCapsule</title>
+  <meta name="description" content="Write a heartfelt letter to your future self and receive it later via email. Reflect, dream, and grow with EraCapsule — your personal time capsule." />
+<meta name="keywords" content="EraCapsule, write letter to future self, time capsule, send email to yourself, future message, self reflection" />
+<meta name="author" content="Aadi Sharma" />
+  <style>
+    /* ====== GLOBAL STYLES ====== */
+    body {
+      font-family: system-ui, Inter, Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      background: #f7fafc;
+      color: #111827;
+      padding: 40px 16px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 28px;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(2,6,23,0.08);
+    }
+
+    h1 {
+      margin-top: 0;
+      color: #0f172a;
+    }
+
+    h2 {
+      color: #0b1220;
+      font-size: 1.1rem;
+      margin-top: 0;
+    }
+
+    p {
+      margin: 12px 0;
+    }
+
+    a {
+      color: #2563eb;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* ====== HEADER ====== */
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    header h1 {
+      color: #347edf;
+      margin-bottom: 10px;
+    }
+
+    nav a {
+      margin: 0 10px;
+      color: #2563eb;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* ====== FORM ====== */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      font-weight: 500;
+      color: #111827;
+    }
+
+    input, textarea {
+      padding: 0.8rem;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 1rem;
+      width: 100%;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+      margin-top: 0.4rem;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #3b82f6;
+      outline: none;
+    }
+
+    button {
+      padding: 0.8rem;
+      border: none;
+      border-radius: 8px;
+      background: #3b82f6;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #2563eb;
+    }
+
+    /* ====== FOOTER ====== */
+    footer {
+      margin-top: 30px;
+      text-align: center;
+      color: #444;
+      font-size: 14px;
+      padding-bottom: 20px;
+    }
+
+    footer a {
+      color: #2563eb;
+      text-decoration: none;
+      margin: 0 8px;
+      font-weight: 500;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    small {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Contact Us</h1>
+    </header>
+
+    <main>
+      <h2></h2>
+      <p>Have questions, suggestions, or feedback? We’d love to hear from you. Fill out the form below and we’ll get back to you soon.</p>
+
+      <form
+        action="https://api.web3forms.com/submit"
+        method="POST"
+        class="form card reveal"
+        data-redirect="https://web3forms.com/success"
+        style="--d:.05s;"
+      >
+        <input type="hidden" name="access_key" value="55f5cf1e-2244-434e-8aaf-c351d4f41f42" />
+        <input type="hidden" name="from_name" value="EraCapsule Website" />
+
+        <label>
+          <span>Name</span>
+          <input type="text" name="name" required />
+        </label>
+
+        <label>
+          <span>Email</span>
+          <input type="email" name="email" required />
+        </label>
+
+        <label>
+          <span>Message</span>
+          <textarea name="message" rows="4" required></textarea>
+        </label>
+
+        <button type="submit" class="btn">Send Message</button>
+      </form>
+    </main>
+
+    <footer>
+      <small>Last updated: October 1, 2025. ©EraCapsule</small>
+      © 2025 EraCapsule. All rights reserved. <br>
+      <a href="index.html">Home</a> |
+    <a href="about.html">About</a> |
+    <a href="Blog.html">Blog</a> |
+    <!-- <a href="contact.html">Contact</a> | -->
+    <a href="privacy.html">Privacy</a> |
+    <a href="terms.html">Terms</a>
+    </footer>
+  </div>
+</body>
+</html>

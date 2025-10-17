@@ -1,0 +1,10 @@
+# Allow all search engines to crawl your website
+User-agent: *
+Allow: /
+
+# Block unwanted admin or private folders (if any)
+Disallow: /admin/
+Disallow: /private/
+
+# Point to your sitemap location
+Sitemap: https://www.futuremeaadi.in/sitemap.xml

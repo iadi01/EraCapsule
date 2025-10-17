@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Homepage -->
+  <url>
+    <loc>https://www.futuremeaadi.in/</loc>
+    <lastmod>2025-10-14</lastmod>
+    <priority>1.00</priority>
+  </url>
+
+  <!-- About Page -->
+  <url>
+    <loc>https://www.futuremeaadi.in/about</loc>
+    <lastmod>2025-10-14</lastmod>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Write Letter Page -->
+  <url>
+    <loc>https://www.futuremeaadi.in/write</loc>
+    <lastmod>2025-10-14</lastmod>
+    <priority>0.90</priority>
+  </url>
+
+  <!-- Terms Page -->
+  <url>
+    <loc>https://www.futuremeaadi.in/terms</loc>
+    <lastmod>2025-10-14</lastmod>
+    <priority>0.70</priority>
+  </url>
+
+  <!-- Privacy Policy -->
+  <url>
+    <loc>https://www.futuremeaadi.in/privacy</loc>
+    <lastmod>2025-10-14</lastmod>
+    <priority>0.70</priority>
+  </url>
+
+  <!-- Contact Page -->
+  <url>
+    <loc>https://www.futuremeaadi.in/contact</loc>
+    <lastmod>2025-10-14</lastmod>
+    <priority>0.75</priority>
+  </url>
+
+</urlset>
