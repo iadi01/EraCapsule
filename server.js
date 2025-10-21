@@ -1,9 +1,17 @@
 require('dotenv').config();
+
 const express = require('express');
-const bodyParser = require('body-parser');
-const sqlite3 = require('sqlite3').verbose();
-const nodemailer = require('nodemailer');
+ const bodyParser = require('body-parser');
+  const mongoose = require('mongoose');
+ const nodemailer = require('nodemailer');
 const path = require('path');
+
+
+// add  MAAAANGO 
+mongoose.connect(process.env.MONGO_URI)
+
+  .then(() => console.log('✅ MongoDB Connected'))
+  .catch(err => console.error('❌ MongoDB Error:', err));
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,26 +19,21 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// =============== DATABASE SETUP ===============
-const db = new sqlite3.Database('./letters.db', (err) => {
-  if (err) console.error('DB Error:', err);
-  else console.log('✅ Connected to SQLite');
-});
+//MAAAONGO MODEL
+const letterSchema = new mongoose.Schema
 
-db.run(`CREATE TABLE IF NOT EXISTS letters (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  recipient_email TEXT NOT NULL,
-  subject TEXT,
-  message TEXT NOT NULL,
-  send_at INTEGER NOT NULL,
-  sent INTEGER DEFAULT 0
-)`);
+  ({  recipient_email: { type: String, required: true },
+         subject: { type: String, default: 'A message from your past self' },
+           message: { type: String, required: true },
+         send_at: { type: Number, required: true },
+      sent: { type: Boolean, default: false }
+  });
 
-// =============== MAILER SETUP ===============
+const Letter = mongoose.model('Letter', letterSchema);
+
+// Dakiya wla
 const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: parseInt(process.env.EMAIL_PORT),
-  secure: process.env.EMAIL_SECURE === 'true',
+  service: "gmail", // 👈 Simple setup if using Gmail
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
@@ -41,31 +44,29 @@ transporter.verify()
   .then(() => console.log('📨 Mailer ready'))
   .catch(err => console.error('Mailer error:', err.message));
 
-// =============== ROUTES ===============
-app.post('/api/send-later', (req, res) => {
-  const { recipient_email, subject, message, send_at } = req.body;
+// =============== ROUTE: SCHEDULE LETTER ===============
+app.post('/api/send-later', async (req, res) => {
+  try {
+    const { recipient_email, subject, message, send_at } = req.body;
 
-  if (!recipient_email || !message || !send_at) {
-    return res.status(400).json({ error: 'All fields required' });
-  }
-
-  const sendAt = Number(send_at);
-  if (isNaN(sendAt) || sendAt <= Date.now()) {
-    return res.status(400).json({ error: 'Select a future time' });
-  }
-
-  const stmt = db.prepare(
-    `INSERT INTO letters (recipient_email, subject, message, send_at)
-     VALUES (?, ?, ?, ?)`
-  );
-  stmt.run(recipient_email, subject || 'A message from your past self', message, sendAt, function (err) {
-    if (err) {
-      console.error('DB Insert Error:', err);
-      return res.status(500).json({ error: 'Database error' });
+    if (!recipient_email || !message || !send_at) {
+      return res.status(400).json({ error: 'All fields required' });
     }
-    console.log('📩 Scheduled mail ID:', this.lastID);
-    res.json({ ok: true, id: this.lastID });
-  });
+
+    const sendAt = Number(send_at);
+    if (isNaN(sendAt) || sendAt <= Date.now()) {
+      return res.status(400).json({ error: 'Select a future time' });
+    }
+
+    const letter = new Letter({ recipient_email, subject, message, send_at: sendAt });
+    await letter.save();
+
+    console.log('📩 Scheduled mail ID:', letter._id);
+    res.json({ ok: true, id: letter._id });
+  } catch (err) {
+    console.error('❌ Error scheduling:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // Serve frontend
@@ -73,34 +74,35 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
-// =============== MAIL CHECKER ===============
+// =============== MAIL CHECKER (CRON) ===============
 async function checkAndSend() {
   const now = Date.now();
   console.log('⏰ Checking pending mails at', new Date(now).toLocaleTimeString());
 
-  db.all(`SELECT * FROM letters WHERE sent = 0 AND send_at <= ?`, [now], (err, rows) => {
-    if (err) return console.error('DB Select Error:', err);
-    if (rows.length === 0) return;
+  const letters = await Letter.find({ sent: false, send_at: { $lte: now } });
+  if (!letters.length) return;
 
-    console.log(`🚀 Sending ${rows.length} message(s)...`);
-    rows.forEach((row) => {
-      const mailOptions = {
-        from: process.env.EMAIL_FROM,
-        to: row.recipient_email,
-        subject: row.subject,
-        text: row.message
-      };
+  console.log(`🚀 Sending ${letters.length} message(s)...`);
 
-      transporter.sendMail(mailOptions, (err, info) => {
-        if (err) return console.error('SendMail Error:', err);
-        console.log('✅ Mail sent to:', row.recipient_email, info.response);
-        db.run(`UPDATE letters SET sent = 1 WHERE id = ?`, [row.id]);
+  for (const letter of letters) {
+    try {
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: letter.recipient_email,
+        subject: letter.subject,
+        text: letter.message
       });
-    });
-  });
+
+      console.log('✅ Mail sent to:', letter.recipient_email);
+      letter.sent = true;
+      await letter.save();
+    } catch (err) {
+      console.error('SendMail Error:', err);
+    }
+  }
 }
 
-// Run every 1 min
+// Check every 1 min
 setInterval(checkAndSend, 60 * 1000);
 setTimeout(checkAndSend, 5000);
 
